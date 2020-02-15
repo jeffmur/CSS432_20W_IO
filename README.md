@@ -3,6 +3,7 @@
 to be updated...
 
 ## General Guidelines
+- Unity Version: 2019.2.10f1
 - always branch from master
 - assuming some basic knowledge of unity & github
 
@@ -23,7 +24,6 @@ to be updated...
 - Basic Game Logic
     - Single jump
     - Possible next move (to allow double jump)
-    - Continue turn if possible kill move -- NEED TO CHECK
 - Turn based local game
 
 ### Issues
