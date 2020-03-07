@@ -193,7 +193,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 6.63e-43, y: 2.4173154e-19, z: 4.5905e-41, w: 0}
+  m_BoundingSphereOverride: {x: NaN, y: 3.6e-43, z: 7.1746e-41, w: NaN}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -233,6 +233,10 @@ MonoBehaviour:
     type: 3}
   blackPiecePrefab: {fileID: 888927227813494918, guid: ff1f6efefd12c3741b472a0f04b232af,
     type: 3}
+  moveIndicatorPrefab: {fileID: 6990113667794291310, guid: 817a7b527721e014b9b8ef9e7607a9fa,
+    type: 3}
+  isWhite: 0
+  isWhiteTurn: 0
 --- !u!65 &888573025
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -168,7 +168,7 @@ public class CheckersBoard : MonoBehaviour
                 // Valid move && Kill?
                 if(Mathf.Abs(x1-x2) == 2)
                 {
-                    // remove piece
+                    // remove killed piece
                     Piece p = pieces[(x1 + x2) / 2, (y1 + y2) / 2];
                     DestroyImmediate(p.gameObject);
                     hasKilled = true;
@@ -222,18 +222,18 @@ public class CheckersBoard : MonoBehaviour
         selectedPiece = null;
         startDrag = Vector2.zero;
 
-        // Allow second move
-        if (ScanForPossibleKill(selectedPiece, x, y).Count != 0 && hasKilled)
-        {
-            Debug.Log("Found a possible kill");
-            return;
-        }
-
         foreach(GameObject moveIndicator in moveIndicators)
         {
             DestroyImmediate(moveIndicator);
         }
         moveIndicators.Clear();
+
+        // Allow second move
+        if (ScanForPossibleKill(x, y).Count != 0 && hasKilled)
+        {
+            Debug.Log("Found a possible kill");
+            return;
+        }
 
         hasKilled = false;
         isWhiteTurn = !isWhiteTurn;
@@ -269,7 +269,7 @@ public class CheckersBoard : MonoBehaviour
             Debug.Log("Black team has won");
     }
     
-    private List<Piece> ScanForPossibleKill(Piece p, int x, int y)
+    private List<Piece> ScanForPossibleKill(int x, int y)
     {
         forcedPieces = new List<Piece>();
 
