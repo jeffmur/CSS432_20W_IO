@@ -70,7 +70,9 @@ public class Piece : MonoBehaviour
                 if(p != null && p.isWhite != isWhite)
                 {
                     // Check if its possible to land after jump
-                    if (board[x - 2, y + 2] == null)
+                    int landX = x - 2;
+                    int landY = y + 2;
+                    if (board[landX, landY] == null && !IsOutOfBounds(landX, landY))
                         return true;
                 }
             }
@@ -82,7 +84,9 @@ public class Piece : MonoBehaviour
                 if (p != null && p.isWhite != isWhite)
                 {
                     // Check if its possible to land after jump
-                    if (board[x + 2, y + 2] == null)
+                    int landX = x + 2;
+                    int landY = y + 2;
+                    if (board[landX, landY] == null && !IsOutOfBounds(landX, landY))
                         return true;
                 }
             }
@@ -98,7 +102,9 @@ public class Piece : MonoBehaviour
                 if (p != null && p.isWhite != isWhite)
                 {
                     // Check if its possible to land after jump
-                    if (board[x - 2, y - 2] == null)
+                    int landX = x - 2;
+                    int landY = y - 2;
+                    if (board[landX, landY] == null && !IsOutOfBounds(landX, landY))
                         return true;
                 }
             }
@@ -110,11 +116,22 @@ public class Piece : MonoBehaviour
                 if (p != null && p.isWhite != isWhite)
                 {
                     // Check if its possible to land after jump
-                    if (board[x + 2, y - 2] == null)
+                    int landX = x + 2;
+                    int landY = y - 2;
+                    if (board[landX, landY] == null && !IsOutOfBounds(landX, landY))
                         return true;
                 }
             }
         }
+        return false;
+    }
+
+    private bool IsOutOfBounds(int x, int y)
+    {
+        if (x > 8 || x < 0)
+            return true;
+        if (y > 8 || y < 0)
+            return true;
         return false;
     }
 }

@@ -119,6 +119,7 @@ public class CheckersBoard : MonoBehaviour
 
     private void TryMove(int x1, int y1, int x2, int y2)
     {
+        hasKilled = false;
         forcedPieces = ScanForPossibleKill();
         // Multiplayer Support !!
         startDrag = new Vector2(x1, y1);
@@ -155,7 +156,7 @@ public class CheckersBoard : MonoBehaviour
                 {
                     // remove piece
                     Piece p = pieces[(x1 + x2) / 2, (y1 + y2) / 2];
-                    Destroy(p.gameObject);
+                    DestroyImmediate(p.gameObject);
                     hasKilled = true;
                 }
 
@@ -209,7 +210,10 @@ public class CheckersBoard : MonoBehaviour
 
         // Allow second move
         if (ScanForPossibleKill(selectedPiece, x, y).Count != 0 && hasKilled)
+        {
+            Debug.Log("Found a possible kill");
             return;
+        }
 
         hasKilled = false;
         isWhiteTurn = !isWhiteTurn;
@@ -219,7 +223,31 @@ public class CheckersBoard : MonoBehaviour
         CheckVictory();
     }
 
-    private void CheckVictory() { }
+    private void CheckVictory() 
+    {
+        var ps = FindObjectsOfType<Piece>();
+        bool hasWhite = false, hasBlack = false;
+        for (int i = 0; i < ps.Length; i++)
+        {
+            if (ps[i].isWhite)
+                hasWhite = true;
+            else
+                hasBlack = true;
+        }
+
+        if (!hasWhite)
+            Victory(false);
+        else if (!hasBlack)
+            Victory(true);
+    }
+
+    private void Victory(bool isWhite)
+    {
+        if (isWhite)
+            Debug.Log("White team has won");        
+        else
+            Debug.Log("Black team has won");
+    }
     
     private List<Piece> ScanForPossibleKill(Piece p, int x, int y)
     {
