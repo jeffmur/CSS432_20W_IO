@@ -6,6 +6,7 @@ public class Piece : MonoBehaviour
 {
     public bool isWhite;
     public bool isKing;
+    public GameObject moveIndicatorPrefab;
 
     public bool ValidMove(Piece[,] board, int x1, int y1, int x2, int y2)
     {
@@ -73,7 +74,10 @@ public class Piece : MonoBehaviour
                     int landX = x - 2;
                     int landY = y + 2;
                     if (board[landX, landY] == null && !IsOutOfBounds(landX, landY))
+                    {
                         return true;
+                    }
+                        
                 }
             }
             // Top Right
@@ -87,7 +91,9 @@ public class Piece : MonoBehaviour
                     int landX = x + 2;
                     int landY = y + 2;
                     if (board[landX, landY] == null && !IsOutOfBounds(landX, landY))
+                    {
                         return true;
+                    }
                 }
             }
         }
@@ -105,7 +111,9 @@ public class Piece : MonoBehaviour
                     int landX = x - 2;
                     int landY = y - 2;
                     if (board[landX, landY] == null && !IsOutOfBounds(landX, landY))
+                    {
                         return true;
+                    }
                 }
             }
             // Bottom Right
@@ -119,7 +127,9 @@ public class Piece : MonoBehaviour
                     int landX = x + 2;
                     int landY = y - 2;
                     if (board[landX, landY] == null && !IsOutOfBounds(landX, landY))
+                    {
                         return true;
+                    }
                 }
             }
         }

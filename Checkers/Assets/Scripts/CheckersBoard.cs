@@ -7,6 +7,7 @@ public class CheckersBoard : MonoBehaviour
     public Piece[,] pieces = new Piece[8, 8];
     public GameObject whitePiecePrefab;
     public GameObject blackPiecePrefab;
+    public GameObject moveIndicatorPrefab;
 
     private Vector3 boardOffset = new Vector3(-4.0f, 0, -4.0f);
     private Vector3 pieceOffset = new Vector3(0.5f, 0, 0.5f);
@@ -17,6 +18,7 @@ public class CheckersBoard : MonoBehaviour
 
     private Piece selectedPiece;
     private List<Piece> forcedPieces;
+    private List<GameObject> moveIndicators;
 
     private Vector2 mouseOver;
     private Vector2 startDrag;
@@ -26,12 +28,24 @@ public class CheckersBoard : MonoBehaviour
     {
         GenerateBoard();
         forcedPieces = new List<Piece>();
+        moveIndicators = new List<GameObject>();
         isWhiteTurn = true;
         isWhite = true;
     }
     private void Update()
     {
         updateMouseOver();
+        forcedPieces = ScanForPossibleKill();
+        if (forcedPieces.Count != moveIndicators.Count)
+        {
+            foreach (Piece piece in forcedPieces)
+            {
+                GameObject moveIndicator = Instantiate(moveIndicatorPrefab) as GameObject;
+                moveIndicator.transform.position = new Vector3(piece.transform.position.x, 0.01f, piece.transform.position.z);
+                moveIndicators.Add(moveIndicator);
+            }
+        }
+      
 
         if((isWhite)?isWhiteTurn:!isWhiteTurn)
         {
@@ -214,6 +228,12 @@ public class CheckersBoard : MonoBehaviour
             Debug.Log("Found a possible kill");
             return;
         }
+
+        foreach(GameObject moveIndicator in moveIndicators)
+        {
+            DestroyImmediate(moveIndicator);
+        }
+        moveIndicators.Clear();
 
         hasKilled = false;
         isWhiteTurn = !isWhiteTurn;
