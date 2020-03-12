@@ -9,15 +9,23 @@ public class GameManager : MonoBehaviour
     public GameObject mainMenu;
     public GameObject hostPrompt;
     public GameObject userPrompt;
+    public GameObject clientObject;
 
     public InputField nameInput;
 
-    public GameObject serverPrefab;
-    public GameObject clientPrefab;
+    public string oponentUsername;
+
+    private Client client;
+
+    enum GameHeaders
+    {
+        USER = 0,
+        MOVE = 1,
+        CHAT = 2
+    }
 
     private void Start()
     {
-        Instance = this;
         hostPrompt.SetActive(false);
         userPrompt.SetActive(false);
         DontDestroyOnLoad(gameObject);
@@ -25,39 +33,30 @@ public class GameManager : MonoBehaviour
 
     public void ConnectButton()
     {
+        IniatlizeConnection();
         mainMenu.SetActive(false);
         userPrompt.SetActive(true);
     }
-    // Directing to HOSTING or JOINING
-    public void HandlePeer()
+
+
+    // connect to server and send username
+    public void IniatlizeConnection()
     {
-        Server s = GetComponent<Server>();
-        int option = 0;// s.ResolveOpponent(nameInput.text);
-        switch (option)
-        {
-            case 0:
-                //HostServer();
-                break;
-            case 1:
-                //ConnectToHost(s.opponentIpAddress);
-                break;
-            default:
-                //s.ResolveOpponent(nameInput.text);
-                break;
-        }
+        ConnectToServer();
+        client.Send((int)GameHeaders.USER, nameInput.text);
     }
 
-    public void HostServer()
+    // 
+    public void ConnectToServer()
     {
-        string hostAddress = "127.0.0.1";
         try
         {
-            Client c = Instantiate(clientPrefab).GetComponent<Client>();
-            c.clientName = nameInput.text;
-            c.isHost = true;
-            if (c.clientName == "")
-                c.clientName = "Host";
-            c.ConnectToServer(hostAddress, 6321);
+            client = GameObject.Find("ClientObject").GetComponent<Client>();
+            client.clientName = nameInput.text;
+            client.isHost = true;
+            if (client.clientName == "")
+                client.clientName = "Host";
+            client.ConnectToServer();
         }
         catch (System.Exception e)
         {
@@ -68,24 +67,7 @@ public class GameManager : MonoBehaviour
         userPrompt.SetActive(false);
         hostPrompt.SetActive(true);
     }
-    public void ConnectToHost(string hostAddress)
-    {
-        try
-        {
-            Client c = Instantiate(clientPrefab).GetComponent<Client>();
-            c.clientName = nameInput.text;
-            if (c.clientName == "")
-                c.clientName = "Client";
 
-            Debug.Log(hostAddress);
-            c.ConnectToServer(hostAddress, 6321);
-            userPrompt.SetActive(false);
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log(e.Message);
-        }
-    }
     public void BackButton()
     {
         mainMenu.SetActive(true);
@@ -104,7 +86,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("Layout");
     }
 }
 

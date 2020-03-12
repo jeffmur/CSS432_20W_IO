@@ -7,31 +7,45 @@ using UnityEngine;
 
 public class Client : MonoBehaviour
 {
+    public GameManager gameManager;
     public string clientName;
     public bool isHost;
+    private static readonly int portNumber = 6007;
+    private static string serverAddress = "70.37.69.170";
 
     private bool socketReady;
     private Socket socket;
     private static byte[] buffer = new byte[256];
 
-    public List<GameClient> players = new List<GameClient>();
+
+    enum GameHeaders
+    {
+        USER = 0,
+        MOVE = 1,
+        ENDT = 2,
+        CHAT = 3
+    }
 
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
-
-    public bool ConnectToServer(string host, int port)
+    
+    // connect to the game server
+    public bool ConnectToServer()
     {
         if (socketReady) return false;
+
         // create IPAddress object from ip address
-        if (!IPAddress.TryParse(host, out var serverIp))
+        if (!IPAddress.TryParse(serverAddress, out var serverIp))
         {
             Debug.LogError("Invalid IP Address");
         }
+
         try
         {
-            IPEndPoint serverEndPoint = new IPEndPoint(serverIp, port);
+            IPEndPoint serverEndPoint = new IPEndPoint(serverIp, portNumber);
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(serverEndPoint);
 
@@ -41,19 +55,20 @@ public class Client : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError("Socket error " + e.Message);
+            Debug.LogError("Socket error: " + e.Message);
         }
 
         return socketReady;
     }
-
-    private void Update()
+    // check socket to server for messages on every frame 
+    void Update()
     {
         if (socketReady)
         {
-            if (socket.Receive(buffer, buffer.Length, 0) != 0) // wait for data
+            if (socket.Receive(buffer) > 0) // wait for data
             {
                 string data = Encoding.ASCII.GetString(buffer);
+                Debug.Log("Data received " + data);
                 OnIncomingData(data);
                 buffer = new byte[256];
             }
@@ -61,11 +76,29 @@ public class Client : MonoBehaviour
     }
 
     // Send messages to the server
-    public void Send(string data)
+    public void Send(int header, string data)
     {
         if (!socketReady) return;
 
-        buffer = Encoding.ASCII.GetBytes(data);
+        string message = "";
+
+        switch (header)
+        {
+            case (int)GameHeaders.USER:
+                message = "USER|";
+                break;
+            case (int)GameHeaders.MOVE:
+                message = "MOVE|";
+                break;
+            case (int)GameHeaders.ENDT:
+                message = "ENDT|";
+                break;
+            case (int)GameHeaders.CHAT:
+                message = "CHAT|";
+                break;
+        }
+        message += data;
+        buffer = Encoding.ASCII.GetBytes(message);
         socket.Send(buffer, buffer.Length, 0);
         buffer = new byte[256];
     }
@@ -78,40 +111,30 @@ public class Client : MonoBehaviour
 
         switch (aData[0])
         {
-            case "SWHO":
-                for (int i = 1; i < aData.Length - 1; i++)
-                {
-                    UserConnected(aData[i], false);
-                }
-                Send("CWHO|" + clientName + "|" + ((isHost) ? 1 : 0).ToString());
+            case "START":
+                gameManager.oponentUsername = aData[1];
+                Debug.Log("START, oponent name: " + gameManager.oponentUsername);
+                gameManager.StartGame();
                 break;
-
-            case "SCNN":
-                UserConnected(aData[1], false);
+            case "MOVE":
+                Debug.Log("MOVE");
+                // move pieces
                 break;
-
-            case "SMOV":
-                //CheckerBoard.Instance.TryMove(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]), int.Parse(aData[4]));
+            case "ENDT":
+                Debug.Log("ENDT");
+                // end turn
                 break;
-
-            case "SMSG":
-                //CheckerBoard.Instance.ChatMessage(aData[1]);
-                //CheckerBoard.Instance.ChatMessage(aData[1]);
+            case "CHAT":
+                Debug.Log("CHAT");
+                // update chat log
+                break;
+            default:
+                Debug.LogError("Received a header outside of range");
                 break;
         }
     }
 
-    private void UserConnected(string name, bool host)
-    {
-        GameClient gc = new GameClient();
-        gc.name = name;
-
-        players.Add(gc);
-
-        if (players.Count == 2)
-            GameManager.Instance.StartGame();
-    }
-
+    // close socket on each instance of the game closing or a user quiting
     private void OnApplicationQuit()
     {
         CloseSocket();
@@ -127,10 +150,4 @@ public class Client : MonoBehaviour
         socket.Close();
         socketReady = false;
     }
-}
-
-public class GameClient
-{
-    public string name;
-    public bool isHost;
 }
