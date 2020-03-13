@@ -3,7 +3,8 @@
  * Utualizes Linux commands to handle multiple clients
  *      - Master Socket
  *      - List of connections
- *      - Pairing system : TODO
+ *      - Pairing system : peerLookUp
+ * 		- Saving Users 	 : userLookUp
  * SOURCE: https://www.geeksforgeeks.org/socket-programming-in-cc-handling-multiple-clients-on-server-without-multi-threading/
  */ 
 #include <stdio.h> 
@@ -64,6 +65,9 @@ void printUsers()
 	for (const auto &pair : userLookUp) {
         printf("%d : %s \n", pair.first, pair.second);
     }
+	for (const auto &pair : peerLookUp) {
+        printf("%d : %d \n", pair.first, pair.second);
+    }
 }
 // fetches username via userLookUp
 // returns string, otherwise null
@@ -95,7 +99,19 @@ int getOpponent(int fd)
 // update map of key to value
 void setOpponent(int key, int value)
 {
-	peerLookUp.insert({key, value});
+	if(key != -1)
+	{
+		printf("New Lobby Created: %i & %i \n", key, value);
+		printUsers();
+		peerLookUp.insert({key, value});
+	}
+}
+
+// sd of disconnecting client
+// keep opponent in queue
+void removePeer(int sd)
+{
+	peerLookUp[getOpponent(sd)] = -1;
 }
 
 // send msg to opponent
@@ -152,19 +168,25 @@ void parseHeader(int fd, char* buffer)
 			StartGame(fd);
             break;
         case 'M':   // MOVE|x1|y1|x2|y2
+		case 'C':   // CHAT|xxxxxxxxxxxxxxxxxxxxxxx
 			sendToOppenent(fd, buffer);
-            break;
-        case 'C':   // CHAT|xxxxxxxxxxxxxxxxxxxxxxx
-		
-			break;
-        case 'E':   // ENDT|xxx
-            
             break;
         default:    // ignore
             string r2 = "NOT SUPPORTED";
             send(fd, r2.c_str(), strlen(r2.c_str()), 0);
             break;
     }
+}
+
+void closeClient(int sd, int i)
+{
+	num_clients--;
+	// Remove sd from data structures
+	peerLookUp.erase(sd);
+	userLookUp.erase(sd);
+	//Close the socket and mark as 0 in list for reuse 
+	close( sd ); 
+	client_socket[i] = 0; 
 }
 
 	
@@ -245,9 +267,9 @@ int main(int argc , char *argv[])
 		//so wait indefinitely 
 		activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL); 
 	
-		if ((activity < 0) && (errno!=EINTR)) 
+		if ((activity < 0) && i < max_clients) 
 		{ 
-			printf("select error \n"); 
+			printf("select error at: sd: %d with %d at: %d\n", max_sd + 1, client_socket[i], i); 
 		} 
 			
 		//If something happened on the master socket , 
@@ -275,15 +297,26 @@ int main(int argc , char *argv[])
 				if( client_socket[i] == 0 ) 
 				{ 
 					client_socket[i] = new_socket; 
-					printf("Adding to list of known sockets as %d\n" , i); 
-					// Pair every even client with predecessor
+					printf("Adding to list of known sockets as %d of %d clients\n" , i, num_clients); 
+					// Pair every even client with opponent
                     if(num_clients % 2 == 0)
                     {
-                        // Add sd(i, i-1)
-                        peerLookUp.insert(pair<int, int>(
-                                            client_socket[i], 
-                                            client_socket[i-1]));
-                        printf("New Lobby Created: %i & %i \n",client_socket[i], client_socket[i-1]);
+                        // We have an even number of players
+						// Check for next opponent
+						// find opponent where client[j] != 0 && peerLookUp(sd) == -1
+						for(int j = 0; j < max_clients; j++)
+						{
+							// don't pair with myself || any client sockets ( >= 4 )
+							if(client_socket[j] != new_socket && client_socket[j] > 3)
+							{
+								if(getOpponent(client_socket[j]) == -1)
+								{
+									setOpponent(new_socket, client_socket[j]);
+									setOpponent(client_socket[j], new_socket);
+								}
+							}
+						}
+                        
                     }
 					break; 
 				} 
@@ -307,13 +340,11 @@ int main(int argc , char *argv[])
 						(socklen_t*)&addrlen); 
 					printf("%s disconnected , ip %s , port %d \n" , getUser(sd),
 						inet_ntoa(address.sin_addr) , ntohs(address.sin_port)); 
-					num_clients--;
-					// TODO: Let opponenet know of disconnection
-					peerLookUp.erase(sd);
-					userLookUp.erase(sd);
-					//Close the socket and mark as 0 in list for reuse 
-					close( sd ); 
-					client_socket[i] = 0; 
+					
+					// Let opponenet know of disconnection
+					sendToOppenent(sd, "QUIT");
+					removePeer(sd);
+					closeClient(sd, i);				
 				} 
 					
 				// Echo back the message that came in 

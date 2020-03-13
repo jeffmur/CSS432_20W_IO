@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CheckersBoard : MonoBehaviour
 {
+    public static CheckersBoard Instance { set; get; }
     private GameManager gameManager;
 
     public Piece[,] pieces = new Piece[8, 8];
@@ -36,6 +37,7 @@ public class CheckersBoard : MonoBehaviour
         moveIndicators = new List<GameObject>();
         isWhiteTurn = true;
         gameManager = GameManager.Instance;
+        Instance = GetComponent<CheckersBoard>();
 
         client = gameManager.clientObject.GetComponent<Client>(); // fetch client for sending moves
         if (gameManager)
@@ -144,7 +146,7 @@ public class CheckersBoard : MonoBehaviour
         }
     }
 
-    private void TryMove(int x1, int y1, int x2, int y2)
+    public void TryMove(int x1, int y1, int x2, int y2)
     {
         hasKilled = false;
         forcedPieces = ScanForPossibleKill();

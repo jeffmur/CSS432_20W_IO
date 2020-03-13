@@ -173,7 +173,7 @@ public class Client : MonoBehaviour
     {
         Debug.Log("Client: " + data);
         string[] aData = data.Split('|');
-
+        clientReceiveThread.Abort(); // NEED TO TEST THIS
         switch (aData[0])
         {
             case "START":
@@ -186,6 +186,10 @@ public class Client : MonoBehaviour
             case "MOVE":
                 Debug.Log("MOVE");
                 // move pieces
+                CheckersBoard.Instance.TryMove(Int32.Parse(aData[1]),
+                                                  Int32.Parse(aData[2]),
+                                                  Int32.Parse(aData[3]),
+                                                  Int32.Parse(aData[4]));
                 break;
             case "ENDT":
                 Debug.Log("ENDT");

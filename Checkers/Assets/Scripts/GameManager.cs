@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour
     public string oponentUsername;
 
     private Client client;
-    private CheckersBoard checkersBoard;
 
     enum GameHeaders
     {
