@@ -15,7 +15,7 @@ public class Client : MonoBehaviour
     private static string serverAddress = "70.37.69.170";
     private Thread clientReceiveThread;
     private bool socketReady;
-    private Socket socket;
+    private Socket sender;
     private static byte[] buffer = new byte[256];
 
 
@@ -48,8 +48,6 @@ public class Client : MonoBehaviour
             clientReceiveThread = new Thread(() => ListenForData(serverIp));
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();
-
-            Debug.Log("Client has connected");
             
         }
         catch (Exception e)
@@ -63,27 +61,63 @@ public class Client : MonoBehaviour
     {
         try
         {
-            IPEndPoint serverEndPoint = new IPEndPoint(serverIp, portNumber);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(serverEndPoint);
+            IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+            IPEndPoint localEndPoint = new IPEndPoint(serverIp, 6007);
 
-            while (true)
+            // Creation TCP/IP Socket using  
+            // Socket Class Costructor 
+            sender = new Socket(serverIp.AddressFamily,
+                       SocketType.Stream, ProtocolType.Tcp);
+            try
             {
-                Debug.Log("loop");
-                if (socket.Receive(buffer) > 0) // wait for data
-                {
-                    string data = Encoding.ASCII.GetString(buffer);
-                    Debug.Log("Data received " + data);
-                    OnIncomingData(data);
-                    buffer = new byte[256];
-                    break;
-                }
+                // Connect Socket to the remote  
+                // endpoint using method Connect() 
+                sender.Connect(localEndPoint);
+
+                // We print EndPoint information  
+                // that we are connected 
+                Debug.Log("Socket connected to -> " +
+                              sender.RemoteEndPoint.ToString());
+
+                // Send data to server
+                // USER|xxx
+                socketReady = true;
+                Send(0, clientName);
+
+                // Data buffer 
+                byte[] messageReceived = new byte[1024];
+
+                // Wait for data from server
+                int byteRecv = sender.Receive(messageReceived);
+                Debug.Log("Message from Server -> " +
+                      Encoding.ASCII.GetString(messageReceived,
+                                                 0, byteRecv));
+                OnIncomingData(Encoding.ASCII.GetString(messageReceived));
+            }
+
+            // Manage of Socket's Exceptions 
+            catch (ArgumentNullException ane)
+            {
+
+                Debug.Log("ArgumentNullException : +" + ane.ToString());
+            }
+
+            catch (SocketException se)
+            {
+
+                Debug.Log("SocketException : " + se.ToString());
+            }
+
+            catch (Exception e)
+            {
+                Debug.Log("Unexpected exception : " + e.ToString());
             }
         }
         catch (SocketException e)
         {
-            Debug.Log("Socket exception " + e);
+            Debug.Log("SocketException : " + e.ToString());
         }
+
     }
     // check socket to server for messages on every frame 
     void Update()
@@ -114,9 +148,11 @@ public class Client : MonoBehaviour
                 break;
         }
         message += data;
-        buffer = Encoding.ASCII.GetBytes(message);
-        socket.Send(buffer, buffer.Length, 0);
-        buffer = new byte[256];
+        // Creation of message that 
+        // we will send to Server 
+        byte[] messageSent = Encoding.ASCII.GetBytes(message);
+        Debug.Log("Sent: " + message);
+        int byteSent = sender.Send(messageSent);
     }
 
     // Read messages from the server
@@ -163,7 +199,9 @@ public class Client : MonoBehaviour
     {
         if (!socketReady) return;
 
-        socket.Close();
+        clientReceiveThread.Abort();
+        sender.Shutdown(SocketShutdown.Both);
+        sender.Close();
         socketReady = false;
     }
 }

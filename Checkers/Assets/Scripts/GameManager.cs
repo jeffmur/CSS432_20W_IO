@@ -30,12 +30,17 @@ public class GameManager : MonoBehaviour
         userPrompt.SetActive(false);
         DontDestroyOnLoad(gameObject);
     }
+    public void PromptUsername()
+    {
+        mainMenu.SetActive(false);
+        userPrompt.SetActive(true);
+    }
 
     public void ConnectButton()
     {
         IniatlizeConnection();
         mainMenu.SetActive(false);
-        userPrompt.SetActive(true);
+        userPrompt.SetActive(false);
     }
 
 
@@ -43,6 +48,7 @@ public class GameManager : MonoBehaviour
     public void IniatlizeConnection()
     {
         ConnectToServer();
+        hostPrompt.SetActive(true);
         client.Send((int)GameHeaders.USER, nameInput.text);
     }
 
@@ -55,7 +61,8 @@ public class GameManager : MonoBehaviour
             client.clientName = nameInput.text;
             client.isHost = true;
             if (client.clientName == "")
-                client.clientName = "Host";
+                client.clientName = "Anonymous";
+
             client.ConnectToServer();
         }
         catch (System.Exception e)
@@ -64,7 +71,6 @@ public class GameManager : MonoBehaviour
         }
 
         mainMenu.SetActive(false);
-        userPrompt.SetActive(false);
         hostPrompt.SetActive(true);
     }
 

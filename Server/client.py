@@ -12,7 +12,7 @@ sock.connect(server_address)
 try:
     
     # Send data
-    message = 'Jeffrey'
+    message = 'USER|Jeffrey'
     print >>sys.stderr, 'sending "%s"' % message
     sock.sendall(message)
 

@@ -637,10 +637,8 @@ GameObject:
   m_Component:
   - component: {fileID: 601779084}
   - component: {fileID: 601779083}
-  - component: {fileID: 601779082}
   - component: {fileID: 601779081}
   - component: {fileID: 601779080}
-  - component: {fileID: 601779085}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -657,14 +655,6 @@ AudioListener:
   m_GameObject: {fileID: 601779079}
   m_Enabled: 1
 --- !u!124 &601779081
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 601779079}
-  m_Enabled: 1
---- !u!92 &601779082
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -729,18 +719,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &601779085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 601779079}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f96b5d32c33140999e2ea7d532a100c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &604136098
 GameObject:
   m_ObjectHideFlags: 0
@@ -1542,7 +1520,7 @@ MonoBehaviour:
   mainMenu: {fileID: 601779079}
   hostPrompt: {fileID: 812353678}
   userPrompt: {fileID: 1150322676}
-  clientObject: {fileID: 0}
+  clientObject: {fileID: 1879522510}
   nameInput: {fileID: 943872877}
   oponentUsername: 
 --- !u!1 &1150322676
@@ -2032,16 +2010,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1150322676}
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1107420692}
+        m_MethodName: PromptUsername
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1789416093
 MonoBehaviour:
