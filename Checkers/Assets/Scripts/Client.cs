@@ -45,10 +45,10 @@ public class Client : MonoBehaviour
 
         try
         {
-            clientReceiveThread = new Thread(() => ListenForData(serverIp));
+            CreateSocket(serverIp);
+            clientReceiveThread = new Thread(() => SendNWait((int)GameHeaders.USER, clientName));
             clientReceiveThread.IsBackground = true;
-            clientReceiveThread.Start();
-            
+            clientReceiveThread.Start();            
         }
         catch (Exception e)
         {
@@ -57,7 +57,7 @@ public class Client : MonoBehaviour
 
         return socketReady;
     }
-    private void ListenForData(IPAddress serverIp)
+    private void CreateSocket(IPAddress serverIp)
     {
         try
         {
@@ -82,30 +82,6 @@ public class Client : MonoBehaviour
                 // Send data to server
                 // USER|xxx
                 socketReady = true;
-                Send((int)GameHeaders.USER, clientName);
-
-                // Data buffer 
-                byte[] messageReceived = new byte[1024];
-
-                // Wait for data from server
-                int byteRecv = sender.Receive(messageReceived);
-                Debug.Log("Message from Server -> " +
-                      Encoding.ASCII.GetString(messageReceived,
-                                                 0, byteRecv));
-                OnIncomingData(Encoding.ASCII.GetString(messageReceived));
-            }
-
-            // Manage of Socket's Exceptions 
-            catch (ArgumentNullException ane)
-            {
-
-                Debug.Log("ArgumentNullException : +" + ane.ToString());
-            }
-
-            catch (SocketException se)
-            {
-
-                Debug.Log("SocketException : " + se.ToString());
             }
 
             catch (Exception e)
@@ -118,6 +94,21 @@ public class Client : MonoBehaviour
         catch (SocketException e)
         {
             Debug.Log("SocketException : " + e.ToString());
+        }
+
+    }
+
+    public void SendNWait(int header, string data)
+    {
+        Send(header, data);
+        // Data buffer 
+        byte[] messageReceived = new byte[1024];
+
+        // Wait for data from server
+        int byteRecv = sender.Receive(messageReceived);
+        if (byteRecv > 0)
+        {
+            OnIncomingData(Encoding.ASCII.GetString(messageReceived));
         }
 
     }
@@ -168,6 +159,7 @@ public class Client : MonoBehaviour
             case "START":
                 gameManager.oponentUsername = aData[1];
                 Debug.Log("START, oponent name: " + gameManager.oponentUsername);
+                clientReceiveThread.Abort();
                 gameManager.StartGame();
                 break;
             case "MOVE":

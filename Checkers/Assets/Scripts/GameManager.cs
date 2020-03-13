@@ -49,7 +49,6 @@ public class GameManager : MonoBehaviour
     {
         ConnectToServer();
         hostPrompt.SetActive(true);
-        client.Send((int)GameHeaders.USER, nameInput.text);
     }
 
     // 
@@ -92,6 +91,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        Debug.Log("LOAD GAME");
         SceneManager.LoadScene("Game");
     }
 }
