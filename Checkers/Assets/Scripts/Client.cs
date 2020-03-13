@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 
 public class Client : MonoBehaviour
@@ -12,7 +13,7 @@ public class Client : MonoBehaviour
     public bool isHost;
     private static readonly int portNumber = 6007;
     private static string serverAddress = "70.37.69.170";
-
+    private Thread clientReceiveThread;
     private bool socketReady;
     private Socket socket;
     private static byte[] buffer = new byte[256];
@@ -29,7 +30,6 @@ public class Client : MonoBehaviour
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
     
     // connect to the game server
@@ -45,34 +45,50 @@ public class Client : MonoBehaviour
 
         try
         {
-            IPEndPoint serverEndPoint = new IPEndPoint(serverIp, portNumber);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(serverEndPoint);
+            clientReceiveThread = new Thread(() => ListenForData(serverIp));
+            clientReceiveThread.IsBackground = true;
+            clientReceiveThread.Start();
 
             Debug.Log("Client has connected");
-
-            socketReady = true;
+            
         }
         catch (Exception e)
         {
-            Debug.LogError("Socket error: " + e.Message);
+            Debug.LogError("On client connect: " + e.Message);
         }
 
         return socketReady;
     }
+    private void ListenForData(IPAddress serverIp)
+    {
+        try
+        {
+            IPEndPoint serverEndPoint = new IPEndPoint(serverIp, portNumber);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(serverEndPoint);
+
+            while (true)
+            {
+                Debug.Log("loop");
+                if (socket.Receive(buffer) > 0) // wait for data
+                {
+                    string data = Encoding.ASCII.GetString(buffer);
+                    Debug.Log("Data received " + data);
+                    OnIncomingData(data);
+                    buffer = new byte[256];
+                    break;
+                }
+            }
+        }
+        catch (SocketException e)
+        {
+            Debug.Log("Socket exception " + e);
+        }
+    }
     // check socket to server for messages on every frame 
     void Update()
     {
-        if (socketReady)
-        {
-            if (socket.Receive(buffer) > 0) // wait for data
-            {
-                string data = Encoding.ASCII.GetString(buffer);
-                Debug.Log("Data received " + data);
-                OnIncomingData(data);
-                buffer = new byte[256];
-            }
-        }
+
     }
 
     // Send messages to the server

@@ -2108,7 +2108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba679a29bde2dab479c673d06b91762a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
+  gameManager: {fileID: 1107420692}
   clientName: 
   isHost: 0
 --- !u!4 &1879522512
