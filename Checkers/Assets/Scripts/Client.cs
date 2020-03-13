@@ -159,8 +159,7 @@ public class Client : MonoBehaviour
             case "START":
                 gameManager.oponentUsername = aData[1];
                 Debug.Log("START, oponent name: " + gameManager.oponentUsername);
-                clientReceiveThread.Abort();
-                gameManager.StartGame();
+                gameManager.startMatch = true;
                 break;
             case "MOVE":
                 Debug.Log("MOVE");

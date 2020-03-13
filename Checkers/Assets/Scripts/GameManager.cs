@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     public GameObject userPrompt;
     public GameObject clientObject;
 
+    public bool startMatch = false;
+
     public InputField nameInput;
 
     public string oponentUsername;
@@ -29,6 +31,12 @@ public class GameManager : MonoBehaviour
         hostPrompt.SetActive(false);
         userPrompt.SetActive(false);
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Update()
+    {
+        if (startMatch)
+            StartGame();
     }
     public void PromptUsername()
     {
@@ -91,6 +99,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        startMatch = false;
         Debug.Log("LOAD GAME");
         SceneManager.LoadScene("Game");
     }
