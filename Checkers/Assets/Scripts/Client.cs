@@ -12,7 +12,7 @@ public class Client : MonoBehaviour
     public string clientName;
     public bool isHost;
     private static readonly int portNumber = 6007;
-    private static string serverAddress = "157.55.186.240";
+    private static string serverAddress = "172.21.198.90";
     private Thread clientReceiveThread;
     private bool socketReady;
     private Socket sender;
