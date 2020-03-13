@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CheckersBoard : MonoBehaviour
 {
+    public GameManager gameManager;
+
     public Piece[,] pieces = new Piece[8, 8];
     public GameObject whitePiecePrefab;
     public GameObject blackPiecePrefab;
@@ -15,6 +17,8 @@ public class CheckersBoard : MonoBehaviour
     public bool isWhite;       // white piece
     public bool isWhiteTurn;   // white turn
     private bool hasKilled;
+
+    public bool isOnline;
 
     private Piece selectedPiece;
     private List<Piece> forcedPieces;
@@ -30,7 +34,12 @@ public class CheckersBoard : MonoBehaviour
         forcedPieces = new List<Piece>();
         moveIndicators = new List<GameObject>();
         isWhiteTurn = true;
-        isWhite = true;
+        gameManager = GameManager.Instance;
+        if (gameManager)
+        {
+            isWhite = gameManager.isWhite;
+            isOnline = gameManager.isOnline;
+        }
     }
     private void Update()
     {
@@ -238,8 +247,8 @@ public class CheckersBoard : MonoBehaviour
         hasKilled = false;
         isWhiteTurn = !isWhiteTurn;
 
-        isWhite = !isWhite;  // Swap turn locally
-
+        if (!isOnline)
+            isWhite = !isWhite;  // Swap turn locally
         CheckVictory();
     }
 

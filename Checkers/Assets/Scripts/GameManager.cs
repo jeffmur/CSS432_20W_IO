@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -12,18 +13,21 @@ public class GameManager : MonoBehaviour
     public GameObject clientObject;
 
     public bool startMatch = false;
+    public bool isOnline;
+    public bool isWhite;
 
     public InputField nameInput;
-
     public string oponentUsername;
 
     private Client client;
+    private CheckersBoard checkersBoard;
 
     enum GameHeaders
     {
         USER = 0,
         MOVE = 1,
-        CHAT = 2
+        ENDT = 2,
+        CHAT = 3
     }
 
     private void Start()
@@ -62,6 +66,7 @@ public class GameManager : MonoBehaviour
     // 
     public void ConnectToServer()
     {
+        isOnline = true;
         try
         {
             client = GameObject.Find("ClientObject").GetComponent<Client>();
@@ -83,6 +88,7 @@ public class GameManager : MonoBehaviour
 
     public void BackButton()
     {
+        isOnline = false;
         mainMenu.SetActive(true);
         userPrompt.SetActive(false);
         hostPrompt.SetActive(false);

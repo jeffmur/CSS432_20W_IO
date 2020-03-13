@@ -12,7 +12,7 @@ public class Client : MonoBehaviour
     public string clientName;
     public bool isHost;
     private static readonly int portNumber = 6007;
-    private static string serverAddress = "70.37.69.170";
+    private static string serverAddress = "157.55.186.240";
     private Thread clientReceiveThread;
     private bool socketReady;
     private Socket sender;
@@ -157,9 +157,11 @@ public class Client : MonoBehaviour
         switch (aData[0])
         {
             case "START":
-                gameManager.oponentUsername = aData[1];
-                Debug.Log("START, oponent name: " + gameManager.oponentUsername);
+                gameManager.isWhite = aData[1].Contains("WHITE");
+                gameManager.oponentUsername = aData[2];
+                Debug.Log("START, oponent name: " + gameManager.oponentUsername + "Is White = " + gameManager.isWhite);
                 gameManager.startMatch = true;
+
                 break;
             case "MOVE":
                 Debug.Log("MOVE");
