@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CheckersBoard : MonoBehaviour
 {
-    public GameManager gameManager;
+    private GameManager gameManager;
 
     public Piece[,] pieces = new Piece[8, 8];
     public GameObject whitePiecePrefab;
@@ -19,6 +19,7 @@ public class CheckersBoard : MonoBehaviour
     private bool hasKilled;
 
     public bool isOnline;
+    public Client client;
 
     private Piece selectedPiece;
     private List<Piece> forcedPieces;
@@ -35,12 +36,15 @@ public class CheckersBoard : MonoBehaviour
         moveIndicators = new List<GameObject>();
         isWhiteTurn = true;
         gameManager = GameManager.Instance;
+
+        client = gameManager.clientObject.GetComponent<Client>(); // fetch client for sending moves
         if (gameManager)
         {
             isWhite = gameManager.isWhite;
             isOnline = gameManager.isOnline;
         }
     }
+
     private void Update()
     {
         updateMouseOver();
@@ -195,7 +199,8 @@ public class CheckersBoard : MonoBehaviour
                 pieces[x2, y2] = selectedPiece;
                 pieces[x1, y1] = null;
                 MovePiece(selectedPiece, x2, y2);
-
+                string m = $"{x1}|{y1}|{x2}|{y2}";
+                client.SendMessage(1, m);
                 EndTurn();
             }
             else
@@ -249,6 +254,8 @@ public class CheckersBoard : MonoBehaviour
 
         if (!isOnline)
             isWhite = !isWhite;  // Swap turn locally
+
+        
         CheckVictory();
     }
 

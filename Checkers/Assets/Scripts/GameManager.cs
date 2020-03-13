@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public GameObject userPrompt;
     public GameObject clientObject;
 
-    public bool startMatch = false;
+    public bool startTrigger = false;
     public bool isOnline;
     public bool isWhite;
 
@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Instance = this.GetComponent<GameManager>();
         hostPrompt.SetActive(false);
         userPrompt.SetActive(false);
         DontDestroyOnLoad(gameObject);
@@ -39,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (startMatch)
+        if (startTrigger)
             StartGame();
     }
     public void PromptUsername()
@@ -105,7 +106,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        startMatch = false;
+        startTrigger = false;
         Debug.Log("LOAD GAME");
         SceneManager.LoadScene("Game");
     }

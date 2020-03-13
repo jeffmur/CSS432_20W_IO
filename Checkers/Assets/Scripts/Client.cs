@@ -19,7 +19,7 @@ public class Client : MonoBehaviour
     private static byte[] buffer = new byte[256];
 
 
-    enum GameHeaders
+    public enum GameHeaders
     {
         USER = 0,
         MOVE = 1,
@@ -98,7 +98,16 @@ public class Client : MonoBehaviour
 
     }
 
-    public void SendNWait(int header, string data)
+    public void SendMessage(int header, string data)
+    {
+
+        clientReceiveThread = new Thread(() => SendNWait(header, data));
+        clientReceiveThread.IsBackground = true;
+        clientReceiveThread.Start();
+    }
+
+
+    private void SendNWait(int header, string data)
     {
         Send(header, data);
         // Data buffer 
@@ -115,11 +124,22 @@ public class Client : MonoBehaviour
     // check socket to server for messages on every frame 
     void Update()
     {
-
+        if (socketReady)
+            if (sender.Available > 0)
+            {
+                // Data buffer 
+                byte[] messageReceived = new byte[1024];
+                // Wait for data from server
+                int byteRecv = sender.Receive(messageReceived);
+                if (byteRecv > 0)
+                {
+                    OnIncomingData(Encoding.ASCII.GetString(messageReceived));
+                }
+            }
     }
 
     // Send messages to the server
-    public void Send(int header, string data)
+    private void Send(int header, string data)
     {
         if (!socketReady) return;
 
@@ -159,9 +179,9 @@ public class Client : MonoBehaviour
             case "START":
                 gameManager.isWhite = aData[1].Contains("WHITE");
                 gameManager.oponentUsername = aData[2];
-                Debug.Log("START, oponent name: " + gameManager.oponentUsername + "Is White = " + gameManager.isWhite);
-                gameManager.startMatch = true;
-
+                Debug.Log("Opponent name: " + gameManager.oponentUsername);
+                Debug.Log("Is White = " + gameManager.isWhite);
+                gameManager.startTrigger = true;
                 break;
             case "MOVE":
                 Debug.Log("MOVE");
