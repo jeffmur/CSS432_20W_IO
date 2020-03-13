@@ -62,7 +62,7 @@ public class Client : MonoBehaviour
         try
         {
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-            IPEndPoint localEndPoint = new IPEndPoint(serverIp, 6007);
+            IPEndPoint localEndPoint = new IPEndPoint(serverIp, portNumber);
 
             // Creation TCP/IP Socket using  
             // Socket Class Costructor 
@@ -82,7 +82,7 @@ public class Client : MonoBehaviour
                 // Send data to server
                 // USER|xxx
                 socketReady = true;
-                Send(0, clientName);
+                Send((int)GameHeaders.USER, clientName);
 
                 // Data buffer 
                 byte[] messageReceived = new byte[1024];
@@ -111,6 +111,8 @@ public class Client : MonoBehaviour
             catch (Exception e)
             {
                 Debug.Log("Unexpected exception : " + e.ToString());
+                // Send END to server
+                // Send((int)GameHeaders.ENDT, "bye");
             }
         }
         catch (SocketException e)

@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Layout");
+        SceneManager.LoadScene("Game");
     }
 }
 
