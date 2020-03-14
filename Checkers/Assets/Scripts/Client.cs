@@ -199,6 +199,9 @@ public class Client : MonoBehaviour
                 Debug.Log("CHAT");
                 // update chat log
                 break;
+            case "QUIT":
+                CloseSocket();
+                break;
             default:
                 Debug.LogError("Received a header outside of range");
                 break;
