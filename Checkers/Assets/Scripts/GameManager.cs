@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     public byte[] incomingDataTrigger = null;
     public bool isOnline;
     public bool isWhite;
-
     public InputField nameInput;
     public string oponentUsername;
 
@@ -34,6 +33,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Instance = this.GetComponent<GameManager>();
+        isWhite = true;
         hostPrompt.SetActive(false);
         userPrompt.SetActive(false);
         DontDestroyOnLoad(gameObject);
@@ -94,15 +94,6 @@ public class GameManager : MonoBehaviour
         mainMenu.SetActive(true);
         userPrompt.SetActive(false);
         hostPrompt.SetActive(false);
-
-        //Host s = FindObjectOfType<Host>();
-        GameObject s = null;
-        if (s != null)
-            Destroy(s.gameObject);
-
-        Client c = FindObjectOfType<Client>();
-        if (c != null)
-            Destroy(c.gameObject);
     }
 
     public void StartGame()

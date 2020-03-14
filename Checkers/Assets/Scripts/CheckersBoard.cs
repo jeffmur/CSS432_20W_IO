@@ -26,6 +26,7 @@ public class CheckersBoard : MonoBehaviour
     public Client client;
 
     private Piece selectedPiece;
+    private Piece movedPiece;
     private List<Piece> forcedPieces;
     private List<GameObject> moveIndicators;
 
@@ -39,6 +40,7 @@ public class CheckersBoard : MonoBehaviour
         forcedPieces = new List<Piece>();
         moveIndicators = new List<GameObject>();
         isWhiteTurn = true;
+        isWhite = true;
         gameManager = GameManager.Instance;
         Instance = GetComponent<CheckersBoard>();
 
@@ -258,6 +260,7 @@ public class CheckersBoard : MonoBehaviour
         }
 
         hasKilled = false;
+        movedPiece = null;
         isWhiteTurn = !isWhiteTurn;
 
         if (!isOnline)
@@ -305,14 +308,17 @@ public class CheckersBoard : MonoBehaviour
 
     private List<Piece> ScanForPossibleKill()
     {
-        forcedPieces = new List<Piece>();
-
+    forcedPieces = new List<Piece>();
         // Scan all the pieces
         for (int i = 0; i < 8; i++)
             for (int j = 0; j < 8; j++)
                 if (pieces[i, j] != null && pieces[i, j].isWhite == isWhiteTurn)
                     if (pieces[i, j].isForceToMove(pieces, i, j))
-                        forcedPieces.Add(pieces[i, j]);
+                        if (movedPiece == null || movedPiece == pieces[i, j])
+                        {
+                            Debug.Log(movedPiece == null ? "Null" : "not null");
+                            forcedPieces.Add(pieces[i, j]);
+                        }
 
         return forcedPieces;
     }
