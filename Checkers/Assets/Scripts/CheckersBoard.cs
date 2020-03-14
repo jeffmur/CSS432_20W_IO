@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
+using System;
 
 public class CheckersBoard : MonoBehaviour
 {
@@ -18,6 +20,7 @@ public class CheckersBoard : MonoBehaviour
     public bool isWhite;       // white piece
     public bool isWhiteTurn;   // white turn
     private bool hasKilled;
+    public bool killPieceTrigger = false;
 
     public bool isOnline;
     public Client client;
@@ -59,8 +62,7 @@ public class CheckersBoard : MonoBehaviour
                 moveIndicator.transform.position = new Vector3(piece.transform.position.x, 0.01f, piece.transform.position.z);
                 moveIndicators.Add(moveIndicator);
             }
-        }
-      
+        }      
 
         if((isWhite)?isWhiteTurn:!isWhiteTurn)
         {
@@ -146,7 +148,11 @@ public class CheckersBoard : MonoBehaviour
         }
     }
 
-    public void TryMove(int x1, int y1, int x2, int y2)
+    public void ForceMove(string[] raw)
+    {
+        TryMove(Int32.Parse(raw[1]), Int32.Parse(raw[2]), Int32.Parse(raw[3]), Int32.Parse(raw[4]));
+    }
+    private void TryMove(int x1, int y1, int x2, int y2)
     {
         hasKilled = false;
         forcedPieces = ScanForPossibleKill();

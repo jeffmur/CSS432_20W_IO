@@ -12,7 +12,7 @@ public class Client : MonoBehaviour
     public string clientName;
     public bool isHost;
     private static readonly int portNumber = 6007;
-    private static string serverAddress = "172.21.198.90";
+    private static string serverAddress = "10.155.176.21";
     private Thread clientReceiveThread;
     private bool socketReady;
     private Socket sender;
@@ -100,7 +100,6 @@ public class Client : MonoBehaviour
 
     public void SendMessage(int header, string data)
     {
-
         clientReceiveThread = new Thread(() => SendNWait(header, data));
         clientReceiveThread.IsBackground = true;
         clientReceiveThread.Start();
@@ -117,6 +116,8 @@ public class Client : MonoBehaviour
         int byteRecv = sender.Receive(messageReceived);
         if (byteRecv > 0)
         {
+            clientReceiveThread.Interrupt();
+            Debug.LogError(clientReceiveThread == Thread.CurrentThread);
             OnIncomingData(Encoding.ASCII.GetString(messageReceived));
         }
 
@@ -173,7 +174,7 @@ public class Client : MonoBehaviour
     {
         Debug.Log("Client: " + data);
         string[] aData = data.Split('|');
-        clientReceiveThread.Abort(); // NEED TO TEST THIS
+
         switch (aData[0])
         {
             case "START":
@@ -186,10 +187,7 @@ public class Client : MonoBehaviour
             case "MOVE":
                 Debug.Log("MOVE");
                 // move pieces
-                CheckersBoard.Instance.TryMove(Int32.Parse(aData[1]),
-                                                  Int32.Parse(aData[2]),
-                                                  Int32.Parse(aData[3]),
-                                                  Int32.Parse(aData[4]));
+                CheckersBoard.Instance.ForceMove(aData);
                 break;
             case "ENDT":
                 Debug.Log("ENDT");
