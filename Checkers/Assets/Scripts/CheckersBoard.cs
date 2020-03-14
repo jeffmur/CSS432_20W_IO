@@ -316,10 +316,7 @@ public class CheckersBoard : MonoBehaviour
                 if (pieces[i, j] != null && pieces[i, j].isWhite == isWhiteTurn)
                     if (pieces[i, j].isForceToMove(pieces, i, j))
                         if (movedPiece == null || movedPiece == pieces[i, j])
-                        {
-                            Debug.Log(movedPiece == null ? "Null" : "not null");
                             forcedPieces.Add(pieces[i, j]);
-                        }
 
         return forcedPieces;
     }
