@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Text;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
     public GameObject clientObject;
 
     public bool startTrigger = false;
+    public byte[] incomingDataTrigger = null;
     public bool isOnline;
     public bool isWhite;
 
@@ -106,7 +108,6 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         startTrigger = false;
-        Debug.Log("LOAD GAME");
         SceneManager.LoadScene("Game");
     }
 }

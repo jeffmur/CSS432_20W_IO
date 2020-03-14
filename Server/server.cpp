@@ -102,16 +102,9 @@ void setOpponent(int key, int value)
 	if(key != -1)
 	{
 		printf("New Lobby Created: %i & %i \n", key, value);
-		printUsers();
-		peerLookUp.insert({key, value});
+        peerLookUp.emplace(key, value); // allow replacement
+        printUsers();
 	}
-}
-
-// sd of disconnecting client
-// keep opponent in queue
-void removePeer(int sd)
-{
-	peerLookUp[getOpponent(sd)] = -1;
 }
 
 // send msg to opponent
@@ -153,11 +146,6 @@ void parseHeader(int fd, char* buffer)
 	vector<char*> content = charToVector(buffer);
 	char* cmd = content[0];
 	//printf("Content: %s, %s \n", content[0], content[1]);
-
-	int opp = getOpponent(fd); // fetch peer
-	// update map to have a two-way map
-	if(opp != -1)
-		setOpponent(opp, fd);
 
 	switch(cmd[0])
     {
@@ -309,10 +297,12 @@ int main(int argc , char *argv[])
 							// don't pair with myself || any client sockets ( >= 4 )
 							if(client_socket[j] != new_socket && client_socket[j] > 3)
 							{
+                                // un paired, alive socket waiting to play
 								if(getOpponent(client_socket[j]) == -1)
 								{
-									setOpponent(new_socket, client_socket[j]);
-									setOpponent(client_socket[j], new_socket);
+                                    // set both to each other
+                                    setOpponent(new_socket, client_socket[j]);
+                                    setOpponent(client_socket[j], new_socket);
 								}
 							}
 						}
@@ -343,7 +333,7 @@ int main(int argc , char *argv[])
 					
 					// Let opponenet know of disconnection
 					sendToOppenent(sd, "QUIT");
-					removePeer(sd);
+					setOpponent(sd, -1);
 					closeClient(sd, i);				
 				} 
 					

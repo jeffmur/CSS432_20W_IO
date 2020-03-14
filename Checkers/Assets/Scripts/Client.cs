@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -98,14 +98,9 @@ public class Client : MonoBehaviour
 
     }
 
-    public void SendMessage(int header, string data)
-    {
-        clientReceiveThread = new Thread(() => SendNWait(header, data));
-        clientReceiveThread.IsBackground = true;
-        clientReceiveThread.Start();
-    }
-
-
+    // ONLY USE FOR START
+    // REASON: paring players togther
+    // MUST wait on main thread
     private void SendNWait(int header, string data)
     {
         Send(header, data);
@@ -116,8 +111,6 @@ public class Client : MonoBehaviour
         int byteRecv = sender.Receive(messageReceived);
         if (byteRecv > 0)
         {
-            clientReceiveThread.Interrupt();
-            Debug.LogError(clientReceiveThread == Thread.CurrentThread);
             OnIncomingData(Encoding.ASCII.GetString(messageReceived));
         }
 
@@ -140,7 +133,7 @@ public class Client : MonoBehaviour
     }
 
     // Send messages to the server
-    private void Send(int header, string data)
+    public void Send(int header, string data)
     {
         if (!socketReady) return;
 
@@ -170,11 +163,20 @@ public class Client : MonoBehaviour
     }
 
     // Read messages from the server
-    private void OnIncomingData(string data)
+    public void OnIncomingData(string data)
     {
         Debug.Log("Client: " + data);
         string[] aData = data.Split('|');
 
+        // Execute in main thread, unless in START (utualizes gamemanager)
+        if(aData[0] != "START")
+        {
+            if (clientReceiveThread != Thread.CurrentThread)
+            {
+                Debug.LogWarning("Not on main thread! Aborting!!");
+                clientReceiveThread.Abort();
+            }
+        }
         switch (aData[0])
         {
             case "START":
@@ -212,7 +214,7 @@ public class Client : MonoBehaviour
     {
         CloseSocket();
     }
-    private void CloseSocket()
+    public void CloseSocket()
     {
         if (!socketReady) return;
 

@@ -208,7 +208,7 @@ public class CheckersBoard : MonoBehaviour
                 pieces[x1, y1] = null;
                 MovePiece(selectedPiece, x2, y2);
                 string m = $"{x1}|{y1}|{x2}|{y2}";
-                client.SendMessage(1, m);
+                client.Send(1, m);
                 EndTurn();
             }
             else
