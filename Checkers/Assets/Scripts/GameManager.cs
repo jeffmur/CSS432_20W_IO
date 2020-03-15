@@ -42,7 +42,8 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         if (startTrigger)
-            StartGame();
+            StartGame(); // this is very bad but works ¯\_(ツ)_/¯
+                        // thank you threads :)
     }
     public void PromptUsername()
     {
@@ -86,6 +87,14 @@ public class GameManager : MonoBehaviour
 
         mainMenu.SetActive(false);
         hostPrompt.SetActive(true);
+    }
+
+    public void Quit()
+    {
+        // Close socket if online
+        if (client != null)
+            client.CloseSocket();
+        SceneManager.LoadScene("Menu");
     }
 
     public void BackButton()

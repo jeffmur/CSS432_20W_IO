@@ -37,8 +37,11 @@ public class GameStat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Enter text into chat w/ Enter
         if (Input.GetKeyDown(KeyCode.Return) && chatMessage.text != "")
             ChatMessage(chatMessage.text, true);
+
+        // Toggle Chat w/ T
         if (Input.GetKeyDown(KeyCode.T) && chatMessage.text == "")
             ToggleChat();
     }
@@ -53,14 +56,17 @@ public class GameStat : MonoBehaviour
 
     public void OpponentPopUp()
     {
-        opponent = SanatizeString(GameManager.Instance.oponentUsername);
+        opponent = GameManager.Instance.oponentUsername;
         whoAmI = client.clientName;
         // only show for online
         if (opponent != "" && whoAmI != "")
+        {
             showDown.text = $"{whoAmI} vs {opponent}";
+            ChatMessage($"has joined", false);
+        }
         else
             showDown.text = "Practice";
-            
+
         StartCoroutine(hideAfter(2));
     }
 
@@ -106,14 +112,6 @@ public class GameStat : MonoBehaviour
         completeFade = true;
     }
 
-    public void Quit()
-    {
-        // Close socket if online
-        if(client != null)
-            client.CloseSocket();
-        SceneManager.LoadScene("Menu");
-    }
-
     // --------------------------- CHAT SYSTEM -----------------------------------
     public void ChatMessage(string message, bool send)
     {
@@ -126,7 +124,7 @@ public class GameStat : MonoBehaviour
         {
             // local host check
             if (client.clientName != "")
-                sentMessage.text = $"<color=green> {whoAmI} </color>: {message}";
+                sentMessage.text = $"<color=green> {whoAmI} </color> {message}";
             else
                 sentMessage.text = message;
 
@@ -136,26 +134,11 @@ public class GameStat : MonoBehaviour
         }
         else // Recieved Message
         {
-            sentMessage.text = $"<color=red> {opponent} </color>: {message}";
+            sentMessage.text = $"<color=red> {opponent} </color> {message}";
         }
 
         // place in chatbox
         m.transform.SetParent(chatPanel.transform);
 
-    }
-
-    // Incoming data is buffed to MASSIVE size
-    // usernames must be sanitized
-    string SanatizeString(string tooBig)
-    {
-        string clean = "";
-        for(int i = 0; i < tooBig.Length; i++)
-        {
-            if (tooBig[i] != '\0')
-                clean += tooBig[i];
-            else
-                break;
-        }
-        return clean;
     }
 }

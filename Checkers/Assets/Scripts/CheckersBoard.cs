@@ -321,7 +321,7 @@ public class CheckersBoard : MonoBehaviour
                         {
                             //Debug.Log(movedPiece == null ? "Null" : "not null");
                             forcedPieces.Add(pieces[i, j]);
-
+                        }
         return forcedPieces;
     }
 

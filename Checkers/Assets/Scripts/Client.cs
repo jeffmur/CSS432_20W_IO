@@ -164,6 +164,7 @@ public class Client : MonoBehaviour
     // Read messages from the server
     public void OnIncomingData(string data)
     {
+        data = SanatizeString(data);
         Debug.Log("Client: " + data);
         string[] aData = data.Split('|');
 
@@ -199,7 +200,7 @@ public class Client : MonoBehaviour
                 GameStat.Instance.ChatMessage(aData[1], false);
                 break;
             case "QUIT":
-                CloseSocket();
+                GameManager.Instance.Quit();
                 break;
             default:
                 Debug.LogError("Received a header outside of range");
@@ -225,4 +226,20 @@ public class Client : MonoBehaviour
         sender.Close();
         socketReady = false;
     }
+
+    // Incoming data is buffed to MASSIVE size
+    // usernames must be sanitized
+    public string SanatizeString(string tooBig)
+    {
+        string clean = "";
+        for (int i = 0; i < tooBig.Length; i++)
+        {
+            if (tooBig[i] != '\0')
+                clean += tooBig[i];
+            else
+                break;
+        }
+        return clean;
+    }
+
 }
