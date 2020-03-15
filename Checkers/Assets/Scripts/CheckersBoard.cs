@@ -23,7 +23,6 @@ public class CheckersBoard : MonoBehaviour
     public bool killPieceTrigger = false;
 
     public bool isOnline;
-    public Client client;
 
     private Piece selectedPiece;
     private Piece movedPiece;
@@ -44,7 +43,6 @@ public class CheckersBoard : MonoBehaviour
         gameManager = GameManager.Instance;
         Instance = GetComponent<CheckersBoard>();
 
-        client = gameManager.clientObject.GetComponent<Client>(); // fetch client for sending moves
         if (gameManager)
         {
             isWhite = gameManager.isWhite;
@@ -213,7 +211,7 @@ public class CheckersBoard : MonoBehaviour
                 MovePiece(selectedPiece, x2, y2);
                 movedPiece = selectedPiece;
                 string m = $"{x1}|{y1}|{x2}|{y2}";
-                client.Send(1, m);
+                Client.Instance.Send(1, m);
                 EndTurn();
             }
             else

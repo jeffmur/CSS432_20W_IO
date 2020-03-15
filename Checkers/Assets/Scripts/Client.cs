@@ -8,11 +8,12 @@ using UnityEngine;
 
 public class Client : MonoBehaviour
 {
-    public GameManager gameManager;
+    public static Client Instance { set; get; }
+
+    private GameManager gameManager;
     public string clientName;
-    public bool isHost;
     private static readonly int portNumber = 6007;
-    private static string serverAddress = "10.155.176.21";
+    private static string serverAddress = "157.55.186.240";
     private Thread clientReceiveThread;
     private bool socketReady;
     private Socket sender;
@@ -27,9 +28,17 @@ public class Client : MonoBehaviour
         CHAT = 3
     }
 
-    private void Start()
+    private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        if (Client.Instance == null) // no instance 
+        {
+            Instance = GetComponent<Client>();
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else                        // otherwise destroy my existance
+        {
+            Destroy(this.gameObject);
+        }
     }
     
     // connect to the game server
@@ -87,6 +96,7 @@ public class Client : MonoBehaviour
             catch (Exception e)
             {
                 Debug.Log("Unexpected exception : " + e.ToString());
+                GameManager.Instance.Quit(0);
                 // SERVER IS NOT ONLINE
             }
         }
@@ -164,6 +174,7 @@ public class Client : MonoBehaviour
     // Read messages from the server
     public void OnIncomingData(string data)
     {
+        gameManager = GameManager.Instance;
         data = SanatizeString(data);
         Debug.Log("Client: " + data);
         string[] aData = data.Split('|');
@@ -200,7 +211,7 @@ public class Client : MonoBehaviour
                 GameStat.Instance.ChatMessage(aData[1], false);
                 break;
             case "QUIT":
-                GameManager.Instance.Quit();
+                GameManager.Instance.Quit(1);
                 break;
             default:
                 Debug.LogError("Received a header outside of range");

@@ -21,16 +21,12 @@ public class GameStat : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        if (GameManager.Instance != null)
-            client = GameManager.Instance.clientObject.GetComponent<Client>();
-        else
-            Debug.LogError("GameManager is null at start of Game!");
-
         Instance = GetComponent<GameStat>();
     }
 
     private void Start()
     {
+        client = Client.Instance;
         OpponentPopUp();
     }
 

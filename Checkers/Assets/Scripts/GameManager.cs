@@ -13,6 +13,15 @@ public class GameManager : MonoBehaviour
     public GameObject userPrompt;
     public GameObject clientObject;
 
+    private static string[] errorMessages = new string[2]
+    {
+        "Fatal: Could not connect to server!",
+        "Oops: Your oppenent has quit on you!"
+    };
+
+    public Text serverDown;
+    public int serverError = -1;
+
     public bool startTrigger = false;
     public byte[] incomingDataTrigger = null;
     public bool isOnline;
@@ -32,15 +41,37 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Instance = this.GetComponent<GameManager>();
+        if (GameManager.Instance == null) // no instance 
+        {
+            Instance = GetComponent<GameManager>();
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance.serverError > -1) // server error (could be any error)
+        {
+            // Show error
+            serverDown.text = errorMessages[Instance.serverError];
+            serverDown.gameObject.SetActive(true);
+
+            // Destroy previous and set as instance
+            Destroy(Instance.gameObject);
+            Instance = GetComponent<GameManager>();
+            DontDestroyOnLoad(gameObject);
+
+        }
+        else // otherwise destroy my existance
+        {
+            Destroy(this.gameObject);
+        }
+
         isWhite = true;
         hostPrompt.SetActive(false);
         userPrompt.SetActive(false);
-        DontDestroyOnLoad(gameObject);
+        
     }
 
     private void Update()
     {
+
         if (startTrigger)
             StartGame(); // this is very bad but works ¯\_(ツ)_/¯
                         // thank you threads :)
@@ -54,6 +85,7 @@ public class GameManager : MonoBehaviour
     public void ConnectButton()
     {
         IniatlizeConnection();
+        serverDown.gameObject.SetActive(false);
         mainMenu.SetActive(false);
         userPrompt.SetActive(false);
     }
@@ -72,9 +104,8 @@ public class GameManager : MonoBehaviour
         isOnline = true;
         try
         {
-            client = GameObject.Find("ClientObject").GetComponent<Client>();
+            client = Client.Instance;
             client.clientName = nameInput.text;
-            client.isHost = true;
             if (client.clientName == "")
                 client.clientName = "Anonymous";
 
@@ -89,11 +120,21 @@ public class GameManager : MonoBehaviour
         hostPrompt.SetActive(true);
     }
 
-    public void Quit()
+    /**
+     * Error Codes
+     *  -1 : everything is fine
+     *   0 : could not connect to server
+     *   1 : opponent quit
+     */ 
+    public void Quit(int errorCode)
     {
         // Close socket if online
         if (client != null)
             client.CloseSocket();
+
+        Debug.LogWarning($"Error Code: {errorCode}");
+
+        Instance.serverError = errorCode;
         SceneManager.LoadScene("Menu");
     }
 
