@@ -87,8 +87,7 @@ public class Client : MonoBehaviour
             catch (Exception e)
             {
                 Debug.Log("Unexpected exception : " + e.ToString());
-                // Send END to server
-                // Send((int)GameHeaders.ENDT, "bye");
+                // SERVER IS NOT ONLINE
             }
         }
         catch (SocketException e)
@@ -169,7 +168,7 @@ public class Client : MonoBehaviour
         string[] aData = data.Split('|');
 
         // Execute in main thread, unless in START (utualizes gamemanager)
-        if(aData[0] != "START")
+        if (aData[0] != "START")
         {
             if (clientReceiveThread != Thread.CurrentThread)
             {
@@ -196,8 +195,8 @@ public class Client : MonoBehaviour
                 // end turn
                 break;
             case "CHAT":
-                Debug.Log("CHAT");
                 // update chat log
+                GameStat.Instance.ChatMessage(aData[1], false);
                 break;
             case "QUIT":
                 CloseSocket();

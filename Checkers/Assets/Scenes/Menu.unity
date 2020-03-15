@@ -202,7 +202,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1107420692}
         m_MethodName: BackButton
         m_Mode: 1
         m_Arguments:
@@ -390,7 +390,7 @@ GameObject:
   - component: {fileID: 241713211}
   - component: {fileID: 241713210}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -412,7 +412,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000015259, y: -0.0000076294}
+  m_AnchoredPosition: {x: -0.000015259, y: -64.45001}
   m_SizeDelta: {x: 1636.3, y: 1088.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &241713210
@@ -996,7 +996,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -97}
+  m_AnchoredPosition: {x: 0, y: -431}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &812353680
@@ -1591,7 +1591,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aa97ff2bb8c0ae47b5097c81790e61a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenu: {fileID: 601779079}
+  mainMenu: {fileID: 366575826}
   hostPrompt: {fileID: 812353678}
   userPrompt: {fileID: 1150322676}
   clientObject: {fileID: 1879522510}
@@ -1639,7 +1639,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -225, y: 152}
+  m_AnchoredPosition: {x: -225, y: 507}
   m_SizeDelta: {x: 450, y: 200}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1150322678

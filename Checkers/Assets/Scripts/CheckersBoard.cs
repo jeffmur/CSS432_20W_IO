@@ -64,10 +64,12 @@ public class CheckersBoard : MonoBehaviour
                 moveIndicator.transform.position = new Vector3(piece.transform.position.x, 0.01f, piece.transform.position.z);
                 moveIndicators.Add(moveIndicator);
             }
-        }      
-
-        if((isWhite)?isWhiteTurn:!isWhiteTurn)
+        }
+        if ((isWhite) ? isWhiteTurn : !isWhiteTurn)
         {
+            if(isOnline)
+                GameStat.Instance.ShowTurn(isWhite == isWhiteTurn);
+
             int x = (int)mouseOver.x;
             int y = (int)mouseOver.y;
 
@@ -317,7 +319,7 @@ public class CheckersBoard : MonoBehaviour
                     if (pieces[i, j].isForceToMove(pieces, i, j))
                         if (movedPiece == null || movedPiece == pieces[i, j])
                         {
-                            Debug.Log(movedPiece == null ? "Null" : "not null");
+                            //Debug.Log(movedPiece == null ? "Null" : "not null");
                             forcedPieces.Add(pieces[i, j]);
                         }
 
