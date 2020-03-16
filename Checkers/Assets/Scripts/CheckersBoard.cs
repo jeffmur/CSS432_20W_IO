@@ -48,6 +48,11 @@ public class CheckersBoard : MonoBehaviour
             isWhite = gameManager.isWhite;
             isOnline = gameManager.isOnline;
         }
+        
+        if (isOnline && !isWhite)
+        {
+            FlipTable();
+        }
     }
 
     private void Update()
@@ -289,12 +294,34 @@ public class CheckersBoard : MonoBehaviour
             Victory(true);
     }
 
-    private void Victory(bool isWhite)
+    public void Victory(bool isWhite)
     {
+        GameStat gameStat = GameStat.Instance;
+        string winner;
         if (isWhite)
-            Debug.Log("White team has won");        
+        {
+            if (isOnline)
+            {
+                if (this.isWhite)
+                    winner = gameStat.whoAmI;
+                else
+                    winner = gameStat.opponent;
+            }
+            winner = "White";
+
+        }
         else
-            Debug.Log("Black team has won");
+        {
+            if (isOnline)
+            {
+                if (!this.isWhite)
+                    winner = gameStat.whoAmI;
+                else
+                    winner = gameStat.opponent;
+            }
+            winner = "Black";
+        }
+        gameStat.WinnerPopUp(winner);
     }
     
     private List<Piece> ScanForPossibleKill(int x, int y)
@@ -373,5 +400,16 @@ public class CheckersBoard : MonoBehaviour
     private void MovePiece(Piece p, int x, int y)
     {
         p.transform.position = (Vector3.right * x) + (Vector3.forward * y) + boardOffset + pieceOffset;
+    }
+
+    private void FlipTable()
+    {
+        GameObject mainCamera = GameObject.Find("Main Camera");
+        mainCamera.transform.position = new Vector3(2, 10, 0);
+        mainCamera.transform.eulerAngles = new Vector3(
+            mainCamera.transform.eulerAngles.x,
+            mainCamera.transform.eulerAngles.y + 180f,
+            mainCamera.transform.eulerAngles.z
+            );
     }
 }

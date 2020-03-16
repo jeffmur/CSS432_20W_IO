@@ -18,6 +18,9 @@ public class GameStat : MonoBehaviour
     public GameObject chat;
 
     public GameObject alertBanner;
+
+    public GameObject winnerBanner;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -64,6 +67,12 @@ public class GameStat : MonoBehaviour
             showDown.text = "Practice";
 
         StartCoroutine(hideAfter(2));
+    }
+
+    public void WinnerPopUp(string winner)
+    {
+        winnerBanner.SetActive(true);
+        winnerBanner.GetComponent<WinnerBanner>().DisplayWinner(winner);
     }
 
     // Local: White || Black Turn
