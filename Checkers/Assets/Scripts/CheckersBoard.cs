@@ -70,7 +70,7 @@ public class CheckersBoard : MonoBehaviour
         }
         if ((isWhite) ? isWhiteTurn : !isWhiteTurn)
         {
-            if(isOnline)
+            if(isOnline && !Banner.alert.gameOver)
                 Banner.alert.ShowTurn(isWhite == isWhiteTurn);
 
             int x = (int)mouseOver.x;
@@ -310,7 +310,8 @@ public class CheckersBoard : MonoBehaviour
                 else
                     winner = gameStat.opponent;
             }
-            winner = "White";
+            else
+                winner = "White";
 
         }
         else
@@ -322,7 +323,8 @@ public class CheckersBoard : MonoBehaviour
                 else
                     winner = gameStat.opponent;
             }
-            winner = "Black";
+            else
+                winner = "Black";
         }
         Banner.alert.WinnerPopUp(winner);
     }

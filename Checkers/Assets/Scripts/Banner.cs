@@ -29,8 +29,10 @@ public class Banner : MonoBehaviour
         StartCoroutine(hideAfter(2));
     }
 
+    public bool gameOver = false;
     public void WinnerPopUp(string winner)
     {
+        gameOver = true;
         display.text = winner + " has won!";
         // static don't fade out
         show(display, rend);
