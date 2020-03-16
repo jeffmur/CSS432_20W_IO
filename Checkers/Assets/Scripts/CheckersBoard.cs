@@ -71,7 +71,7 @@ public class CheckersBoard : MonoBehaviour
         if ((isWhite) ? isWhiteTurn : !isWhiteTurn)
         {
             if(isOnline)
-                GameStat.Instance.ShowTurn(isWhite == isWhiteTurn);
+                Banner.alert.ShowTurn(isWhite == isWhiteTurn);
 
             int x = (int)mouseOver.x;
             int y = (int)mouseOver.y;
@@ -215,8 +215,11 @@ public class CheckersBoard : MonoBehaviour
                 pieces[x1, y1] = null;
                 MovePiece(selectedPiece, x2, y2);
                 movedPiece = selectedPiece;
-                string m = $"{x1}|{y1}|{x2}|{y2}";
-                Client.Instance.Send(1, m);
+                if (Client.Instance)
+                {
+                    string m = $"{x1}|{y1}|{x2}|{y2}";
+                    Client.Instance.Send(1, m);
+                }
                 EndTurn();
             }
             else
@@ -321,7 +324,7 @@ public class CheckersBoard : MonoBehaviour
             }
             winner = "Black";
         }
-        gameStat.WinnerPopUp(winner);
+        Banner.alert.WinnerPopUp(winner);
     }
     
     private List<Piece> ScanForPossibleKill(int x, int y)

@@ -19,8 +19,6 @@ public class GameStat : MonoBehaviour
 
     public GameObject alertBanner;
 
-    public GameObject winnerBanner;
-
     // Start is called before the first frame update
     void Awake()
     {
@@ -30,7 +28,12 @@ public class GameStat : MonoBehaviour
     private void Start()
     {
         client = Client.Instance;
-        OpponentPopUp();
+        if(GameManager.Instance.isOnline)
+        {
+            opponent = GameManager.Instance.oponentUsername;
+            whoAmI = Client.Instance.clientName;
+        }
+        Banner.alert.OpponentPopUp(opponent, whoAmI);
     }
 
     // Update is called once per frame
@@ -51,70 +54,6 @@ public class GameStat : MonoBehaviour
             chat.SetActive(false);
         else
             chat.SetActive(true);
-    }
-
-    public void OpponentPopUp()
-    {
-        opponent = GameManager.Instance.oponentUsername;
-        whoAmI = client.clientName;
-        // only show for online
-        if (opponent != "" && whoAmI != "")
-        {
-            showDown.text = $"{whoAmI} vs {opponent}";
-            ChatMessage($"has joined", false);
-        }
-        else
-            showDown.text = "Practice";
-
-        StartCoroutine(hideAfter(2));
-    }
-
-    public void WinnerPopUp(string winner)
-    {
-        winnerBanner.SetActive(true);
-        winnerBanner.GetComponent<WinnerBanner>().DisplayWinner(winner);
-    }
-
-    // Local: White || Black Turn
-    // Online: Your Move
-    bool completeFade = true;
-    public void ShowTurn(bool isPlaying)
-    {
-        /// CURRRENTLY FLASHING
-        if (isPlaying && completeFade)
-        {
-            completeFade = false;
-            showDown.text = "Your Move";
-            StartCoroutine(FadeOut(2f, showDown, alertBanner.GetComponent<Image>()));
-        }
-    }
-
-
-    private IEnumerator hideAfter(int sec)
-    {
-        // reset
-        Image rend = alertBanner.GetComponent<Image>();
-        Color temp = rend.color;
-        temp.a = 1.0f;
-        rend.color = temp;
-
-        yield return new WaitForSeconds(sec);
-
-        StartCoroutine(FadeOut(1f, showDown, alertBanner.GetComponent<Image>()));
-
-    }
-
-    public IEnumerator FadeOut(float t, Text i, Image j)
-    {
-        i.color = new Color(i.color.r, i.color.g, i.color.b, 1);
-        j.color = new Color(j.color.r, j.color.g, j.color.b, 1);
-        while (i.color.a > 0.0f)
-        {
-            i.color = new Color(i.color.r, i.color.g, i.color.b, i.color.a - (Time.deltaTime / t));
-            j.color = new Color(j.color.r, j.color.g, j.color.b, j.color.a - (Time.deltaTime / t));
-            yield return null;
-        }
-        completeFade = true;
     }
 
     // --------------------------- CHAT SYSTEM -----------------------------------
