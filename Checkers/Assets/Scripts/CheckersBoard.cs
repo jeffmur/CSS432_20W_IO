@@ -220,7 +220,6 @@ public class CheckersBoard : MonoBehaviour
                     string m = $"{x1}|{y1}|{x2}|{y2}";
                     Client.Instance.Send(1, m);
                 }
-                EndTurn();
             }
             else
             {
@@ -228,6 +227,7 @@ public class CheckersBoard : MonoBehaviour
                 selectedPiece = null;
                 startDrag = Vector2.zero;
             }
+            EndTurn();
         }
     }
 

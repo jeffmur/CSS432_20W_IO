@@ -45,7 +45,7 @@ public class Banner : MonoBehaviour
     public void ShowTurn(bool isPlaying)
     {
         /// CURRRENTLY FLASHING
-        if (isPlaying && completeFade)
+        if (isPlaying && completeFade && !gameOver)
         {
             completeFade = false;
             display.text = "Your Move";
