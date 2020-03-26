@@ -16,6 +16,7 @@ public class GameStat : MonoBehaviour
     public GameObject messagePrefab;
     public GameObject chatPanel;
     public GameObject chat;
+    public GameObject endPrompt;
 
     public GameObject alertBanner;
 
@@ -84,5 +85,26 @@ public class GameStat : MonoBehaviour
         // place in chatbox
         m.transform.SetParent(chatPanel.transform);
 
+    }
+
+    // --------------------------- END OF GAME -----------------------------------
+
+    public void EndOfGame()
+    {
+        // Display quit or rematch
+        endPrompt.SetActive(true);
+    }
+
+    public void toMenu()
+    {
+        SceneManager.LoadScene("Menu");
+    }
+
+    public void Rematch()
+    {
+        // Send rematch
+        client.Send(2, "");
+        // on recieve push a new game and flip sides
+        SceneManager.LoadScene("Game");
     }
 }

@@ -13,7 +13,7 @@ public class Client : MonoBehaviour
     private GameManager gameManager;
     public string clientName;
     private static readonly int portNumber = 6007;
-    private static string serverAddress = "157.55.186.240";
+    private static string serverAddress = "40.78.11.23";
     private Thread clientReceiveThread;
     private bool socketReady;
     private Socket sender;
@@ -150,16 +150,16 @@ public class Client : MonoBehaviour
 
         switch (header)
         {
-            case (int)GameHeaders.USER:
+            case (int)GameHeaders.USER: // Join game
                 message = "USER|";
                 break;
-            case (int)GameHeaders.MOVE:
+            case (int)GameHeaders.MOVE: // Move
                 message = "MOVE|";
                 break;
-            case (int)GameHeaders.ENDT:
-                message = "ENDT|";
+            case (int)GameHeaders.ENDT: // Rematch
+                message = "REMT|";
                 break;
-            case (int)GameHeaders.CHAT:
+            case (int)GameHeaders.CHAT: // Message
                 message = "CHAT|";
                 break;
         }
@@ -202,9 +202,11 @@ public class Client : MonoBehaviour
                 // move pieces
                 CheckersBoard.Instance.ForceMove(aData);
                 break;
-            case "ENDT":
-                Debug.Log("ENDT");
-                // end turn
+            case "REMT":
+                Debug.Log("Rematch?");
+                gameManager.startTrigger = true;
+                gameManager.isWhite = !gameManager.isWhite; // switch sides
+                GameManager.Instance.StartGame();   // start game
                 break;
             case "CHAT":
                 // update chat log
