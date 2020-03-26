@@ -326,6 +326,7 @@ public class CheckersBoard : MonoBehaviour
             else
                 winner = "Black";
         }
+        GameStat.Instance.EndOfGame();
         Banner.alert.WinnerPopUp(winner);
     }
     
