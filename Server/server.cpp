@@ -83,7 +83,7 @@ void setUser(int fd, char* name)
 {
 	char* toAdd = new char[strlen(name)];
 	strcpy(toAdd, name);
-	printf("New User! %d:%s \n", fd, name, &name);
+	printf("New User! %d:%s \n", fd, name);
 	userLookUp[fd] = toAdd;
 	printUsers();
 }
@@ -156,6 +156,7 @@ void parseHeader(int fd, char* buffer)
 			StartGame(fd);
             break;
         case 'M':   // MOVE|x1|y1|x2|y2
+		case 'R'	// REMT| 
 		case 'C':   // CHAT|xxxxxxxxxxxxxxxxxxxxxxx
 			sendToOppenent(fd, buffer);
             break;
