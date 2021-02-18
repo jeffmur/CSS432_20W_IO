@@ -1,30 +1,23 @@
-# CSS432 [Project Proposal](https://docs.google.com/document/d/105CCw2I-2erSvRIkoGeBQuCgsMpgwbm8mEWOLpMxZOA/edit?usp=sharing)
+# Multiplayer Checkers
+Authors: Jeffrey Murray Jr, Chris O’Keefe, Sam Krogh
 
-to be updated...
+## Project Description
+Multiplayer Checkers is an an online, application-based version of American checkers. Players will use a client to connect to a matchmaking server in order to be paired up with other, with the gameplay clients communicating over the server. Players are identified in the game by a username of their choice.
 
-## General Guidelines
+In addition to being able to play a best-of-1 game of checkers against an online opponent (As per the rules here), the application will allow players to rematch their current opponent and track their overall total wins and losses. In-game, players will be able to view the name of their opponent, the current state of the board, as well as whose turn it currently is.
+
+The project itself is currently planned to be developed in C# using Unity and Visual Studio, as our group has experience working with both and Unity will make the GUI and menu design somewhat easier.
+
+## Version
 - Unity Version: 2019.2.10f1
-- always branch from master
-- assuming some basic knowledge of unity & github
 
-## Schedule
-| Date | Goals  
-|---   |---     
-| 1/26 | Refine project idea, design architecture  
-| 2/2  | Finalize Idea, begin prototyping  
-| 2/9  | Work on basic game rules and network communication  
-| 2/16 | Finish game rules and win/loss condition
-| 2/23 | Work on the online multiplayer
-| 3/1  | Finish online multiplayer, add additional features
-| 3/8  | Finish additional features
-| 3/15 | Final polish
----
+## For Developers
+Previously configured to Azure VM, however can be implemented on any public IP address server
 
-## Server
-Currently configured to Azure VM
-To change:
-- Modify Server/server.cpp to correct ip via ifconfig
+**To change:**
+- Modify Server/server.cpp to correct ip via *ifconfig* or *ip add*
 - Modify Checkers/Assets/Scripts/Client.cs serverAddress to corrected IP address
+- Recompile & Generate .EXE or .APP on Unity Version 2019.2.10f1
 - Initialize server via ./runServer.sh
 - Enjoy!
 
