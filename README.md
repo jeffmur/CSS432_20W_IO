@@ -1,8 +1,6 @@
 # Multiplayer Checkers
 Authors: Jeffrey Murray Jr, Chris O’Keefe, Sam Krogh
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/l5op8ZvKh5I" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 ## Project Description
 Multiplayer Checkers is an an online, application-based version of American checkers. Players will use a client to connect to a matchmaking server in order to be paired up with other, with the gameplay clients communicating over the server. Players are identified in the game by a username of their choice.
 
