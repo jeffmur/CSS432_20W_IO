@@ -13,7 +13,7 @@ public class Client : MonoBehaviour
     private GameManager gameManager;
     public string clientName;
     private static readonly int portNumber = 6007;
-    private static string serverAddress = "40.78.11.23";
+    private static string serverAddress = "CHANGEME";
     private Thread clientReceiveThread;
     private bool socketReady;
     private Socket sender;
